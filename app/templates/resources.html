@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Resources — CampusCorrect{% endblock %}
+{% block content %}
+<section class="page">
+  <p class="eyebrow">CAMPUS CORRECT LIBRARY</p>
+  <h1>Your academic resources.</h1>
+  {% if resources %}
+    <div class="resource-list">
+      {% for r in resources %}
+      <article class="resource">
+        <div>
+          <span class="tag">{{ r.resource_type }}</span>
+          <h2>{{ r.title }}</h2>
+          {% if r.description %}<p>{{ r.description }}</p>{% endif %}
+        </div>
+        <span class="muted">Resource processing/download endpoint will be enabled with cloud storage in the next phase.</span>
+      </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty card">
+      <h2>Resources are being prepared.</h2>
+      <p>More materials will appear here as the library is populated.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
