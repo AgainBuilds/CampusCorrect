@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}CampusCorrect — Get ahead academically with less stress{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">FEDERAL UNIVERSITY OTUOKE</p>
+  <h1>Get ahead academically with less stress.</h1>
+  <p class="lead">Find organized course materials, study guides and past questions in one place.</p>
+  <a class="button" href="/pledge">Start studying</a>
+</section>
+
+<section class="card">
+  <h2>Choose your programme</h2>
+  <p>CampusCorrect is starting with FUO and ten high-demand programmes.</p>
+  <div class="grid">
+    {% for p in programmes %}
+      <a class="programme" href="/resources?programme_id={{ p.id }}&level=100">
+        <strong>{{ p.name }}</strong>
+        <span>{{ p.faculty }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="split">
+  <div class="card">
+    <h2>Contribute</h2>
+    <p>Have a useful educational PDF? Submit it for review and help another student.</p>
+    <a href="/upload">Upload material →</a>
+  </div>
+  <div class="card">
+    <h2>Coming later</h2>
+    <p>A Nigeria-wide student community will have a place in the platform architecture.</p>
+  </div>
+</section>
+{% endblock %}
