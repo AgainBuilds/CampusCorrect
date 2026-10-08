@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Upload Material — CampusCorrect{% endblock %}
+{% block content %}
+<section class="page narrow">
+  <p class="eyebrow">CONTRIBUTE</p>
+  <h1>Upload educational material.</h1>
+  <p>Uploads are reviewed before they become public.</p>
+  {% if request.query_params.get('submitted') %}
+    <div class="notice">Submitted. Your material is now in the moderation queue.</div>
+  {% endif %}
+  <form class="card form" action="/upload" method="post" enctype="multipart/form-data">
+    <label>Title<input name="title" required placeholder="e.g. CSC101 2025 First Semester Past Questions"></label>
+    <label>Material type
+      <select name="resource_type">
+        <option>Past Question</option>
+        <option>Lecture Note</option>
+        <option>Course Outline</option>
+        <option>Study Guide</option>
+        <option>Assignment</option>
+        <option>Educational Material</option>
+      </select>
+    </label>
+    <label>Email (optional)<input type="email" name="submitter_email" placeholder="you@example.com"></label>
+    <label>PDF file<input type="file" name="file" accept="application/pdf" required></label>
+    <button class="button" type="submit">Submit for review</button>
+  </form>
+</section>
+{% endblock %}
