@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}The CampusCorrect Pledge{% endblock %}
+{% block content %}
+<section class="pledge">
+  <p class="eyebrow">BEFORE YOU BEGIN</p>
+  <h1>A promise to yourself.</h1>
+  <p class="pledge-text">I promise to use these materials to improve myself academically, to read, to learn, to become... for I am limitless, so I solemnly promise myself.</p>
+  <form action="/pledge" method="post">
+    <button class="button" type="submit">I SOLEMNLY PROMISE</button>
+  </form>
+</section>
+{% endblock %}
