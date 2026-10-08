@@ -7,3 +7,4 @@ python-multipart
 boto3
 pydantic-settings
 email-validator
+itsdangerous
