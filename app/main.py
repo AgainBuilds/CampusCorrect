@@ -24,11 +24,14 @@ templates = Jinja2Templates(directory="app/templates")
 def home(request: Request, db: Session = Depends(get_db)):
     university = db.query(University).filter_by(code="FUO").first()
     programmes = db.query(Programme).filter_by(university_id=university.id).order_by(Programme.name).all()
-    return templates.TemplateResponse("home.html", {
-        "request": request,
-        "university": university,
-        "programmes": programmes,
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="home.html",
+        context={
+            "university": university,
+            "programmes": programmes,
+        },
+    )
 
 @app.get("/resources", response_class=HTMLResponse)
 def resources(request: Request, programme_id: int | None = None, level: int | None = None,
@@ -40,14 +43,24 @@ def resources(request: Request, programme_id: int | None = None, level: int | No
         course_ids = [c.id for c in db.query(Course).filter_by(programme_id=programme_id, level=level).all()]
         query = query.filter(Resource.course_id.in_(course_ids)) if course_ids else query.filter(False)
     resources = query.order_by(Resource.created_at.desc()).all()
-    return templates.TemplateResponse("resources.html", {
-        "request": request, "resources": resources,
-        "programme_id": programme_id, "level": level, "semester": semester
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="resources.html",
+        context={
+            "resources": resources,
+            "programme_id": programme_id,
+            "level": level,
+            "semester": semester,
+        },
+    )
 
 @app.get("/pledge", response_class=HTMLResponse)
 def pledge(request: Request):
-    return templates.TemplateResponse("pledge.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request,
+        name="pledge.html",
+        context={},
+    )
 
 @app.post("/pledge")
 def accept_pledge(request: Request):
@@ -58,7 +71,11 @@ def accept_pledge(request: Request):
 def upload_page(request: Request, db: Session = Depends(get_db)):
     university = db.query(University).filter_by(code="FUO").first()
     programmes = db.query(Programme).filter_by(university_id=university.id).order_by(Programme.name).all()
-    return templates.TemplateResponse("upload.html", {"request": request, "programmes": programmes})
+    return templates.TemplateResponse(
+        request=request,
+        name="upload.html",
+        context={"programmes": programmes},
+    )
 
 @app.post("/upload")
 async def upload_material(
