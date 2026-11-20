@@ -1,240 +1,77 @@
 
 {% extends "base.html" %}
 
-{% block title %}{{ course.code }} — CampusCorrect{% endblock %}
+{% block title %}{{ level }} Level — CampusCorrect{% endblock %}
 
 {% block content %}
 
 <div class="container academic-page">
 
-    <!-- BREADCRUMB -->
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="/">Home</a>
         <span>/</span>
-        <a href="/level/{{ course.level }}">{{ course.level }} Level</a>
+        <a href="/level/{{ level }}">{{ level }} Level</a>
         <span>/</span>
-        <strong>{{ course.code }}</strong>
+
+        <strong>
+            {% if semester == 1 %}
+                First Semester
+            {% else %}
+                Second Semester
+            {% endif %}
+        </strong>
     </nav>
 
-    <!-- COURSE HEADER -->
-    <section class="course-header">
-        <span class="course-code">{{ course.code }}</span>
+    <h1>{{ level }} Level</h1>
 
-        <h1>{{ course.title }}</h1>
-
-        <div class="course-meta">
-            <span>{{ course.level }} Level</span>
-            <span>
-                {% if course.semester == "1" %}
-                    First Semester
-                {% elif course.semester == "2" %}
-                    Second Semester
-                {% else %}
-                    Semester {{ course.semester }}
-                {% endif %}
-            </span>
-
-            {% if course.programme %}
-                <span>{{ course.programme.name }}</span>
-            {% endif %}
-        </div>
-    </section>
-
-
-    <!-- COURSE OUTLINE -->
-    <section class="course-section" id="outline">
-
-        <div class="course-section-heading">
-            <h2>Course Outline</h2>
-            <p>Topics covered in this course</p>
-        </div>
-
-        {% if course.code|replace(" ", "")|upper == "MTH201" %}
-
-            <ol class="course-outline">
-                <li>Real and absolute functions of a real variable</li>
-                <li>Mean Value Theorem</li>
-                <li>Taylor series</li>
-                <li>Real-valued functions of two or three variables</li>
-                <li>Partial derivatives (chain rule)</li>
-                <li>Extrema and Lagrange multipliers</li>
-                <li>Exercises on composition of functions</li>
-            </ol>
-
+    <p class="academic-description">
+        {% if semester == 1 %}
+            First Semester Courses
         {% else %}
+            Second Semester Courses
+        {% endif %}
+    </p>
 
-            {% set outline_found = namespace(value=false) %}
+    {% if courses %}
 
-            {% for resource in resources %}
-                {% set kind = resource.resource_type|lower|replace(" ", "_")|replace("-", "_") %}
+        <div class="academic-list">
 
-                {% if kind in ["outline", "course_outline", "syllabus"] %}
-                    {% set outline_found.value = true %}
+            {% for course in courses %}
 
-                    <div class="resource-item">
-                        <div>
-                            <h3>{{ resource.title }}</h3>
-                            {% if resource.description %}
-                                <p>{{ resource.description }}</p>
-                            {% endif %}
-                        </div>
+                <a
+                    href="/course/{{ course.id }}"
+                    class="academic-row"
+                >
 
-                        {% if resource.source_url %}
-                            <a class="resource-link"
-                               href="{{ resource.source_url }}"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                View outline →
-                            </a>
-                        {% endif %}
+                    <span class="academic-index">
+                        {{ "%02d"|format(loop.index) }}
+                    </span>
+
+                    <div>
+                        <h2>{{ course.code }}</h2>
+                        <p>{{ course.title }}</p>
                     </div>
-                {% endif %}
-            {% endfor %}
 
-            {% if not outline_found.value %}
-                <div class="academic-empty">
-                    <h2>Course outline unavailable</h2>
-                    <p>The outline for this course has not been added yet.</p>
-                </div>
-            {% endif %}
+                    <span class="academic-arrow">↗</span>
 
-        {% endif %}
+                </a>
 
-    </section>
-
-
-    <!-- TEXTBOOKS -->
-    <section class="course-section" id="textbooks">
-
-        <div class="course-section-heading">
-            <h2>Textbooks</h2>
-            <p>Recommended academic materials</p>
-        </div>
-
-        {% set textbook_found = namespace(value=false) %}
-
-        <div class="resource-list">
-
-            {% for resource in resources %}
-                {% set kind = resource.resource_type|lower|replace(" ", "_")|replace("-", "_") %}
-
-                {% if kind in ["textbook", "textbooks", "book", "books"] %}
-                    {% set textbook_found.value = true %}
-
-                    <article class="resource-item">
-                        <div>
-                            <span class="resource-type">Textbook</span>
-                            <h3>{{ resource.title }}</h3>
-
-                            {% if resource.description %}
-                                <p>{{ resource.description }}</p>
-                            {% endif %}
-                        </div>
-
-                        {% if resource.source_url %}
-                            <a class="resource-link"
-                               href="{{ resource.source_url }}"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                Open →
-                            </a>
-                        {% endif %}
-                    </article>
-                {% endif %}
             {% endfor %}
 
         </div>
 
-        {% if not textbook_found.value %}
-            <div class="academic-empty">
-                <h2>No textbooks added yet</h2>
-                <p>Recommended textbooks will appear here when they are available.</p>
-            </div>
-        {% endif %}
+    {% else %}
 
-    </section>
-
-
-    <!-- PAST QUESTIONS -->
-    <section class="course-section" id="past-questions">
-
-        <div class="course-section-heading">
-            <h2>Past Questions</h2>
-            <p>Previous examination materials</p>
-        </div>
-
-        {% set questions_found = namespace(value=false) %}
-
-        <div class="resource-list">
-
-            {% for resource in resources %}
-                {% set kind = resource.resource_type|lower|replace(" ", "_")|replace("-", "_") %}
-
-                {% if kind in ["past_question", "past_questions", "past_question_paper", "exam_question", "exam_questions"] %}
-                    {% set questions_found.value = true %}
-
-                    <article class="resource-item">
-                        <div>
-                            <span class="resource-type">Past Question</span>
-                            <h3>{{ resource.title }}</h3>
-
-                            {% if resource.description %}
-                                <p>{{ resource.description }}</p>
-                            {% endif %}
-
-                            {% if resource.year %}
-                                <p>Academic year: {{ resource.year }}</p>
-                            {% endif %}
-                        </div>
-
-                        {% if resource.source_url %}
-                            <a class="resource-link"
-                               href="{{ resource.source_url }}"
-                               target="_blank"
-                               rel="noopener noreferrer">
-                                Open →
-                            </a>
-                        {% endif %}
-                    </article>
-                {% endif %}
-            {% endfor %}
-
-        </div>
-
-        {% if not questions_found.value %}
-            <div class="academic-empty">
-                <h2>No past questions available</h2>
-                <p>Past examination questions will be listed here once approved and published.</p>
-            </div>
-        {% endif %}
-
-    </section>
-
-
-    <!-- CONTRIBUTORS -->
-    <section class="course-section" id="contributors">
-
-        <div class="course-section-heading">
-            <h2>Contributors</h2>
-            <p>Students helping others learn</p>
-        </div>
-
-        <div class="contributor-empty">
-            <h2>Contributor recognition</h2>
+        <div class="academic-empty">
+            <h2>No courses added yet.</h2>
 
             <p>
-                This section is reserved for the students who contribute
-                textbooks, past questions and other academic materials.
-                Contributor names, levels and contribution statistics
-                will appear here when contributor records are connected.
+                Courses for this semester will appear here
+                when they are added to the academic catalogue.
             </p>
-
-            <a href="/upload" class="btn">
-                Contribute materials →
-            </a>
         </div>
 
-    </section>
+    {% endif %}
 
 </div>
 
