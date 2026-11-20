@@ -25,13 +25,16 @@
 <section class="academic-selection">
 
     <div class="section-topline">
+
         <div>
             <p class="eyebrow">ACADEMIC NAVIGATION</p>
             <h2>Choose your class level</h2>
         </div>
 
         <span class="section-index">01 / 03</span>
+
     </div>
+
 
     <div class="level-grid">
 
@@ -44,6 +47,7 @@
             <span class="level-arrow">↗</span>
         </a>
 
+
         <a href="/level/200" class="level-item">
             <span class="level-number">02</span>
             <div>
@@ -52,6 +56,7 @@
             </div>
             <span class="level-arrow">↗</span>
         </a>
+
 
         <a href="/level/300" class="level-item">
             <span class="level-number">03</span>
@@ -62,6 +67,7 @@
             <span class="level-arrow">↗</span>
         </a>
 
+
         <a href="/level/400" class="level-item">
             <span class="level-number">04</span>
             <div>
@@ -70,6 +76,7 @@
             </div>
             <span class="level-arrow">↗</span>
         </a>
+
 
         <a href="/level/500" class="level-item">
             <span class="level-number">05</span>
@@ -85,40 +92,10 @@
 </section>
 
 
-<section class="programme-section">
-
-    <div class="section-topline">
-        <div>
-            <p class="eyebrow">YOUR DEPARTMENT</p>
-            <h2>Choose your programme</h2>
-        </div>
-    </div>
-
-    <div class="programme-grid">
-
-        {% for p in programmes %}
-
-        <a class="programme-item"
-           href="/resources?programme_id={{ p.id }}&level=100">
-
-            <span class="programme-symbol">↗</span>
-
-            <strong>{{ p.name }}</strong>
-
-            <span>{{ p.faculty }}</span>
-
-        </a>
-
-        {% endfor %}
-
-    </div>
-
-</section>
-
-
 <section class="contribution-section">
 
     <div>
+
         <p class="eyebrow">BUILT BY STUDENTS</p>
 
         <h2>
@@ -130,6 +107,7 @@
             Contribute useful course materials and help
             other students prepare better.
         </p>
+
     </div>
 
     <a href="/upload" class="kraft-button">
