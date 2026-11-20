@@ -22,36 +22,40 @@ def seed():
     db = SessionLocal()
 
     try:
-        university = db.query(University).filter_by(code="FUO").first()
+        university = db.query(University).filter_by(
+            code="FUO"
+        ).first()
 
         if not university:
             university = University(
                 name="Federal University Otuoke",
                 code="FUO"
             )
+
             db.add(university)
             db.flush()
 
-        # Register programmes.
+        # Create programmes if they do not exist.
         for name, faculty in PROGRAMMES:
+
             programme = db.query(Programme).filter_by(
                 university_id=university.id,
                 name=name
             ).first()
 
             if not programme:
-                db.add(
-                    Programme(
-                        university_id=university.id,
-                        name=name,
-                        faculty=faculty
-                    )
+                programme = Programme(
+                    university_id=university.id,
+                    name=name,
+                    faculty=faculty
                 )
+
+                db.add(programme)
 
         db.flush()
 
-        # Register courses from the code-managed catalogue.
-        for course_code, data in ACADEMIC_CATALOG.items():
+        # Register courses from the academic catalogue.
+        for course_key, data in ACADEMIC_CATALOG.items():
 
             programme = db.query(Programme).filter_by(
                 university_id=university.id,
@@ -67,6 +71,7 @@ def seed():
             ).first()
 
             if not course:
+
                 course = Course(
                     programme_id=programme.id,
                     code=data["code"],
@@ -74,9 +79,11 @@ def seed():
                     level=data["level"],
                     semester=data["semester"]
                 )
+
                 db.add(course)
+
             else:
-                # Keep database course metadata in sync with the catalogue.
+
                 course.title = data["title"]
                 course.level = data["level"]
                 course.semester = data["semester"]
