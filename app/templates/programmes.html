@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ level }} Level Programmes — CampusCorrect{% endblock %}
+
+{% block content %}
+
+<section class="academic-page">
+
+    <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <strong>{{ level }} Level</strong>
+    </div>
+
+    <p class="eyebrow">ACADEMIC NAVIGATION</p>
+
+    <h1>{{ level }} Level</h1>
+
+    <p class="academic-description">
+        Select your department or programme to continue.
+    </p>
+
+    <div class="academic-list">
+
+        {% for programme in programmes %}
+
+        <a
+            href="/level/{{ level }}/programme/{{ programme.id }}"
+            class="academic-row"
+        >
+
+            <span class="academic-index">
+                {{ "%02d"|format(loop.index) }}
+            </span>
+
+            <div>
+                <h2>{{ programme.name }}</h2>
+
+                {% if programme.faculty %}
+                <p>{{ programme.faculty }}</p>
+                {% else %}
+                <p>View programme courses</p>
+                {% endif %}
+            </div>
+
+            <span class="academic-arrow">↗</span>
+
+        </a>
+
+        {% else %}
+
+        <div class="academic-empty">
+            <p class="empty-code">NO PROGRAMMES FOUND</p>
+            <h2>No programmes are available.</h2>
+            <p>Please return home and try again.</p>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}
