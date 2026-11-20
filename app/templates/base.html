@@ -1,21 +1,67 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}CampusCorrect{% endblock %}</title>
-  <meta name="description" content="Get ahead academically with less stress.">
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}CampusCorrect{% endblock %}</title>
+
+    <meta name="description" content="CampusCorrect — Get ahead academically with less stress.">
+
+    <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
-<header class="nav">
-  <a class="brand" href="/">CampusCorrect</a>
-  <nav>
-    <a href="/resources">Resources</a>
-    <a href="/upload">Upload</a>
-  </nav>
-</header>
-<main>{% block content %}{% endblock %}</main>
-<footer>CampusCorrect · Get ahead academically with less stress</footer>
+
+    <div id="page-loader" class="page-loader">
+        <div class="loader-content">
+            <div class="loader-mark">CC.</div>
+            <h2>CampusCorrect</h2>
+            <div class="loader-line">
+                <span></span>
+            </div>
+            <p>Preparing your academic space...</p>
+        </div>
+    </div>
+
+    <header class="site-header">
+
+        <a href="/" class="brand">
+            <span class="brand-mark">CC.</span>
+            <span>CampusCorrect</span>
+        </a>
+
+        <nav class="header-links">
+            <a href="/">Home</a>
+            <a href="/upload">Contribute</a>
+        </nav>
+
+    </header>
+
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-brand">CampusCorrect.</div>
+        <p>Get ahead academically with less stress.</p>
+        <span>Federal University Otuoke</span>
+    </footer>
+
+    <script>
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("page-loader");
+
+            if (loader) {
+                loader.classList.add("loader-hidden");
+
+                setTimeout(function () {
+                    loader.remove();
+                }, 400);
+            }
+        });
+    </script>
+
 </body>
 </html>
