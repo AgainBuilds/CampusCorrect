@@ -1,35 +1,141 @@
+
 {% extends "base.html" %}
-{% block title %}CampusCorrect — Get ahead academically with less stress{% endblock %}
+
+{% block title %}CampusCorrect — Academic Resources{% endblock %}
+
 {% block content %}
-<section class="hero">
-  <p class="eyebrow">FEDERAL UNIVERSITY OTUOKE</p>
-  <h1>Get ahead academically with less stress.</h1>
-  <p class="lead">Find organized course materials, study guides and past questions in one place.</p>
-  <a class="button" href="/pledge">Start studying</a>
+
+<section class="home-intro">
+
+    <p class="eyebrow">FEDERAL UNIVERSITY OTUOKE</p>
+
+    <h1>
+        Your academic life,
+        <span>better organised.</span>
+    </h1>
+
+    <p class="intro-description">
+        Find your courses, access academic materials
+        and learn together with other students.
+    </p>
+
 </section>
 
-<section class="card">
-  <h2>Choose your programme</h2>
-  <p>CampusCorrect is starting with FUO and ten high-demand programmes.</p>
-  <div class="grid">
-    {% for p in programmes %}
-      <a class="programme" href="/resources?programme_id={{ p.id }}&level=100">
-        <strong>{{ p.name }}</strong>
-        <span>{{ p.faculty }}</span>
-      </a>
-    {% endfor %}
-  </div>
+
+<section class="academic-selection">
+
+    <div class="section-topline">
+        <div>
+            <p class="eyebrow">ACADEMIC NAVIGATION</p>
+            <h2>Choose your class level</h2>
+        </div>
+
+        <span class="section-index">01 / 03</span>
+    </div>
+
+    <div class="level-grid">
+
+        <a href="/level/100" class="level-item">
+            <span class="level-number">01</span>
+            <div>
+                <h3>100 Level</h3>
+                <p>First year</p>
+            </div>
+            <span class="level-arrow">↗</span>
+        </a>
+
+        <a href="/level/200" class="level-item">
+            <span class="level-number">02</span>
+            <div>
+                <h3>200 Level</h3>
+                <p>Second year</p>
+            </div>
+            <span class="level-arrow">↗</span>
+        </a>
+
+        <a href="/level/300" class="level-item">
+            <span class="level-number">03</span>
+            <div>
+                <h3>300 Level</h3>
+                <p>Third year</p>
+            </div>
+            <span class="level-arrow">↗</span>
+        </a>
+
+        <a href="/level/400" class="level-item">
+            <span class="level-number">04</span>
+            <div>
+                <h3>400 Level</h3>
+                <p>Fourth year</p>
+            </div>
+            <span class="level-arrow">↗</span>
+        </a>
+
+        <a href="/level/500" class="level-item">
+            <span class="level-number">05</span>
+            <div>
+                <h3>500 Level</h3>
+                <p>Fifth year</p>
+            </div>
+            <span class="level-arrow">↗</span>
+        </a>
+
+    </div>
+
 </section>
 
-<section class="split">
-  <div class="card">
-    <h2>Contribute</h2>
-    <p>Have a useful educational PDF? Submit it for review and help another student.</p>
-    <a href="/upload">Upload material →</a>
-  </div>
-  <div class="card">
-    <h2>Coming later</h2>
-    <p>A Nigeria-wide student community will have a place in the platform architecture.</p>
-  </div>
+
+<section class="programme-section">
+
+    <div class="section-topline">
+        <div>
+            <p class="eyebrow">YOUR DEPARTMENT</p>
+            <h2>Choose your programme</h2>
+        </div>
+    </div>
+
+    <div class="programme-grid">
+
+        {% for p in programmes %}
+
+        <a class="programme-item"
+           href="/resources?programme_id={{ p.id }}&level=100">
+
+            <span class="programme-symbol">↗</span>
+
+            <strong>{{ p.name }}</strong>
+
+            <span>{{ p.faculty }}</span>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
 </section>
+
+
+<section class="contribution-section">
+
+    <div>
+        <p class="eyebrow">BUILT BY STUDENTS</p>
+
+        <h2>
+            Make academic resources
+            available to everyone.
+        </h2>
+
+        <p>
+            Contribute useful course materials and help
+            other students prepare better.
+        </p>
+    </div>
+
+    <a href="/upload" class="kraft-button">
+        Contribute a resource →
+    </a>
+
+</section>
+
 {% endblock %}
