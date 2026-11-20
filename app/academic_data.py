@@ -2,8 +2,9 @@
 """
 CAMPUSCORRECT ACADEMIC CATALOGUE
 
-Add and update course information here.
-Course codes are stored without spaces and in uppercase.
+This is the central source of academic course content.
+Update this file whenever new course outlines or materials
+are supplied.
 """
 
 ACADEMIC_CATALOG = {
