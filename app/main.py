@@ -1,7 +1,15 @@
-from .academic_data import ACADEMIC_CATALOG
+
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import (
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    UploadFile,
+)
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
@@ -11,17 +19,30 @@ from sqlalchemy.orm import Session
 from .database import Base, engine, get_db
 from .config import settings
 from .models import (
-    University, Programme, Course, Resource,
-    Upload, ResourceNotification
+    University,
+    Programme,
+    Course,
+    Resource,
+    Upload,
+    ResourceNotification,
 )
 from .storage import save_file, validate_pdf
 from .seed import seed
+from .academic_data import ACADEMIC_CATALOG
 
+
+# DATABASE INITIALIZATION
 
 Base.metadata.create_all(bind=engine)
 seed()
 
-app = FastAPI(title="CampusCorrect", version="0.2.0")
+
+# APPLICATION
+
+app = FastAPI(
+    title="CampusCorrect",
+    version="0.3.0"
+)
 
 app.add_middleware(
     SessionMiddleware,
@@ -34,21 +55,32 @@ app.mount(
     name="static"
 )
 
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(
+    directory="app/templates"
+)
 
 
 # HOMEPAGE
 
 @app.get("/", response_class=HTMLResponse)
-def home(request: Request, db: Session = Depends(get_db)):
-    university = db.query(University).filter_by(code="FUO").first()
+def home(
+    request: Request,
+    db: Session = Depends(get_db)
+):
 
-    programmes = (
-        db.query(Programme)
-        .filter_by(university_id=university.id)
-        .order_by(Programme.name)
-        .all()
-    )
+    university = db.query(University).filter_by(
+        code="FUO"
+    ).first()
+
+    programmes = []
+
+    if university:
+        programmes = (
+            db.query(Programme)
+            .filter_by(university_id=university.id)
+            .order_by(Programme.name)
+            .all()
+        )
 
     return templates.TemplateResponse(
         request=request,
@@ -62,11 +94,20 @@ def home(request: Request, db: Session = Depends(get_db)):
 
 # CLASS LEVEL SELECTION
 
-@app.get("/level/{level}", response_class=HTMLResponse)
-def select_level(request: Request, level: int):
+@app.get(
+    "/level/{level}",
+    response_class=HTMLResponse
+)
+def select_level(
+    request: Request,
+    level: int
+):
 
     if level not in [100, 200, 300, 400, 500]:
-        raise HTTPException(status_code=404, detail="Level not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Level not found"
+        )
 
     return templates.TemplateResponse(
         request=request,
@@ -91,18 +132,22 @@ def select_semester(
 ):
 
     if level not in [100, 200, 300, 400, 500]:
-        raise HTTPException(status_code=404, detail="Level not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Level not found"
+        )
 
     if semester not in [1, 2]:
-        raise HTTPException(status_code=404, detail="Semester not found")
-
-    semester_name = str(semester)
+        raise HTTPException(
+            status_code=404,
+            detail="Semester not found"
+        )
 
     courses = (
         db.query(Course)
         .filter(
             Course.level == level,
-            Course.semester == semester_name
+            Course.semester == str(semester)
         )
         .order_by(Course.code)
         .all()
@@ -119,19 +164,27 @@ def select_semester(
     )
 
 
-# INDIVIDUAL COURSE
+# INDIVIDUAL COURSE PAGE
 
-@app.get("/course/{course_id}", response_class=HTMLResponse)
+@app.get(
+    "/course/{course_id}",
+    response_class=HTMLResponse
+)
 def course_page(
     request: Request,
     course_id: int,
     db: Session = Depends(get_db)
 ):
 
-    course = db.query(Course).filter_by(id=course_id).first()
+    course = db.query(Course).filter_by(
+        id=course_id
+    ).first()
 
     if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Course not found"
+        )
 
     resources = (
         db.query(Resource)
@@ -143,11 +196,19 @@ def course_page(
         .all()
     )
 
+    course_key = course.code.replace(" ", "").upper()
+
+    course_data = ACADEMIC_CATALOG.get(
+        course_key,
+        {}
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="course.html",
         context={
             "course": course,
+            "course_data": course_data,
             "resources": resources,
         },
     )
@@ -155,7 +216,10 @@ def course_page(
 
 # EXISTING RESOURCE LIBRARY
 
-@app.get("/resources", response_class=HTMLResponse)
+@app.get(
+    "/resources",
+    response_class=HTMLResponse
+)
 def resources(
     request: Request,
     programme_id: int | None = None,
@@ -165,24 +229,31 @@ def resources(
 ):
 
     if not request.session.get("pledged"):
-        return RedirectResponse("/pledge", status_code=303)
+        return RedirectResponse(
+            "/pledge",
+            status_code=303
+        )
 
     query = db.query(Resource).filter(
         Resource.status == "published"
     )
 
     if programme_id and level:
+
         course_ids = [
-            c.id for c in db.query(Course).filter_by(
+            course.id
+            for course in db.query(Course).filter_by(
                 programme_id=programme_id,
                 level=level
             ).all()
         ]
 
-        query = (
-            query.filter(Resource.course_id.in_(course_ids))
-            if course_ids else query.filter(False)
-        )
+        if course_ids:
+            query = query.filter(
+                Resource.course_id.in_(course_ids)
+            )
+        else:
+            query = query.filter(False)
 
     resource_items = query.order_by(
         Resource.created_at.desc()
@@ -200,9 +271,12 @@ def resources(
     )
 
 
-# PLEDGE
+# PLEDGE PAGE
 
-@app.get("/pledge", response_class=HTMLResponse)
+@app.get(
+    "/pledge",
+    response_class=HTMLResponse
+)
 def pledge(request: Request):
 
     return templates.TemplateResponse(
@@ -217,27 +291,43 @@ def accept_pledge(request: Request):
 
     request.session["pledged"] = True
 
-    return RedirectResponse("/", status_code=303)
+    return RedirectResponse(
+        "/",
+        status_code=303
+    )
 
 
 # UPLOAD PAGE
 
-@app.get("/upload", response_class=HTMLResponse)
-def upload_page(request: Request, db: Session = Depends(get_db)):
+@app.get(
+    "/upload",
+    response_class=HTMLResponse
+)
+def upload_page(
+    request: Request,
+    db: Session = Depends(get_db)
+):
 
-    university = db.query(University).filter_by(code="FUO").first()
+    university = db.query(University).filter_by(
+        code="FUO"
+    ).first()
 
-    programmes = (
-        db.query(Programme)
-        .filter_by(university_id=university.id)
-        .order_by(Programme.name)
-        .all()
-    )
+    programmes = []
+
+    if university:
+        programmes = (
+            db.query(Programme)
+            .filter_by(university_id=university.id)
+            .order_by(Programme.name)
+            .all()
+        )
 
     return templates.TemplateResponse(
         request=request,
         name="upload.html",
-        context={"programmes": programmes},
+        context={
+            "programmes": programmes,
+        },
     )
 
 
@@ -252,7 +342,10 @@ async def upload_material(
     db: Session = Depends(get_db),
 ):
 
-    if not validate_pdf(file.filename or "", file.content_type):
+    if not validate_pdf(
+        file.filename or "",
+        file.content_type
+    ):
         raise HTTPException(
             status_code=400,
             detail="Only PDF files are accepted in the MVP."
@@ -299,7 +392,10 @@ def notify_when_ready(
 
     db.commit()
 
-    return RedirectResponse("/resources", status_code=303)
+    return RedirectResponse(
+        "/resources",
+        status_code=303
+    )
 
 
 # HEALTH CHECK
@@ -316,17 +412,64 @@ def health():
 # PROGRAMME API
 
 @app.get("/api/programmes")
-def api_programmes(db: Session = Depends(get_db)):
+def api_programmes(
+    db: Session = Depends(get_db)
+):
 
-    university = db.query(University).filter_by(code="FUO").first()
+    university = db.query(University).filter_by(
+        code="FUO"
+    ).first()
+
+    if not university:
+        return []
+
+    programmes = (
+        db.query(Programme)
+        .filter_by(university_id=university.id)
+        .all()
+    )
 
     return [
         {
-            "id": p.id,
-            "name": p.name,
-            "faculty": p.faculty
+            "id": programme.id,
+            "name": programme.name,
+            "faculty": programme.faculty
         }
-        for p in db.query(Programme).filter_by(
-            university_id=university.id
-        ).all()
+        for programme in programmes
+    ]
+
+
+# ACADEMIC CATALOGUE API
+
+@app.get("/api/courses")
+def api_courses(
+    level: int | None = None,
+    semester: str | None = None,
+    db: Session = Depends(get_db)
+):
+
+    query = db.query(Course)
+
+    if level is not None:
+        query = query.filter(Course.level == level)
+
+    if semester is not None:
+        query = query.filter(Course.semester == semester)
+
+    courses = query.order_by(Course.code).all()
+
+    return [
+        {
+            "id": course.id,
+            "code": course.code,
+            "title": course.title,
+            "level": course.level,
+            "semester": course.semester,
+            "programme": (
+                course.programme.name
+                if course.programme
+                else None
+            ),
+        }
+        for course in courses
     ]
