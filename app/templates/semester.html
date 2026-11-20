@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ level }} Level — CampusCorrect{% endblock %}
+
+{% block content %}
+
+<section class="academic-page">
+
+    <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <strong>{{ level }} Level</strong>
+    </div>
+
+    <p class="eyebrow">ACADEMIC STRUCTURE</p>
+
+    <h1>{{ level }} Level</h1>
+
+    <p class="academic-description">
+        Select your semester to continue.
+    </p>
+
+    <div class="academic-list">
+
+        <a href="/level/{{ level }}/semester/1"
+           class="academic-row">
+
+            <span class="academic-index">01</span>
+
+            <div>
+                <h2>First Semester</h2>
+                <p>First semester courses</p>
+            </div>
+
+            <span class="academic-arrow">↗</span>
+
+        </a>
+
+        <a href="/level/{{ level }}/semester/2"
+           class="academic-row">
+
+            <span class="academic-index">02</span>
+
+            <div>
+                <h2>Second Semester</h2>
+                <p>Second semester courses</p>
+            </div>
+
+            <span class="academic-arrow">↗</span>
+
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
