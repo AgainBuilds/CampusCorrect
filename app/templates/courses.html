@@ -1,0 +1,66 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ level }} Level Courses — CampusCorrect{% endblock %}
+
+{% block content %}
+
+<section class="academic-page">
+
+    <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/level/{{ level }}">{{ level }} Level</a>
+        <span>/</span>
+        <strong>Semester {{ semester }}</strong>
+    </div>
+
+    <p class="eyebrow">COURSE DIRECTORY</p>
+
+    <h1>{{ level }} Level</h1>
+
+    <p class="academic-description">
+        Semester {{ semester }} — Select a course.
+    </p>
+
+    {% if courses %}
+
+    <div class="academic-list">
+
+        {% for course in courses %}
+
+        <a href="/course/{{ course.id }}"
+           class="academic-row">
+
+            <span class="academic-index">
+                {{ "%02d"|format(loop.index) }}
+            </span>
+
+            <div>
+                <h2>{{ course.code }}</h2>
+                <p>{{ course.title }}</p>
+            </div>
+
+            <span class="academic-arrow">↗</span>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="academic-empty">
+        <h2>No courses added yet.</h2>
+        <p>
+            Courses for this level and semester
+            will appear here once added to the academic directory.
+        </p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
