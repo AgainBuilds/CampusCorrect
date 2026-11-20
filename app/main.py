@@ -153,12 +153,19 @@ def select_semester(
         .all()
     )
 
+    semester_name = (
+        "First Semester"
+        if semester == 1
+        else "Second Semester"
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="courses.html",
         context={
             "level": level,
             "semester": semester,
+            "semester_name": semester_name,
             "courses": courses,
         },
     )
