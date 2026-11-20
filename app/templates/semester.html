@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 
-{% block title %}{{ level }} Level — CampusCorrect{% endblock %}
+{% block title %}{{ programme.name }} — {{ level }} Level — CampusCorrect{% endblock %}
 
 {% block content %}
 
@@ -10,41 +10,47 @@
     <div class="breadcrumb">
         <a href="/">Home</a>
         <span>/</span>
-        <strong>{{ level }} Level</strong>
+        <a href="/level/{{ level }}">{{ level }} Level</a>
+        <span>/</span>
+        <strong>{{ programme.name }}</strong>
     </div>
 
-    <p class="eyebrow">ACADEMIC STRUCTURE</p>
+    <p class="eyebrow">SELECT SEMESTER</p>
 
-    <h1>{{ level }} Level</h1>
+    <h1>{{ programme.name }}</h1>
 
     <p class="academic-description">
-        Select your semester to continue.
+        {{ level }} Level. Choose the semester you want to access.
     </p>
 
     <div class="academic-list">
 
-        <a href="/level/{{ level }}/semester/1"
-           class="academic-row">
+        <a
+            href="/level/{{ level }}/programme/{{ programme.id }}/semester/1"
+            class="academic-row"
+        >
 
             <span class="academic-index">01</span>
 
             <div>
                 <h2>First Semester</h2>
-                <p>First semester courses</p>
+                <p>View first semester courses</p>
             </div>
 
             <span class="academic-arrow">↗</span>
 
         </a>
 
-        <a href="/level/{{ level }}/semester/2"
-           class="academic-row">
+        <a
+            href="/level/{{ level }}/programme/{{ programme.id }}/semester/2"
+            class="academic-row"
+        >
 
             <span class="academic-index">02</span>
 
             <div>
                 <h2>Second Semester</h2>
-                <p>Second semester courses</p>
+                <p>View second semester courses</p>
             </div>
 
             <span class="academic-arrow">↗</span>
