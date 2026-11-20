@@ -1,6 +1,4 @@
 
-from pathlib import Path
-
 from fastapi import (
     Depends,
     FastAPI,
@@ -41,7 +39,7 @@ seed()
 
 app = FastAPI(
     title="CampusCorrect",
-    version="0.3.0"
+    version="0.4.0"
 )
 
 app.add_middleware(
@@ -60,6 +58,12 @@ templates = Jinja2Templates(
 )
 
 
+# CONSTANTS
+
+VALID_LEVELS = [100, 200, 300, 400, 500]
+VALID_SEMESTERS = [1, 2]
+
+
 # HOMEPAGE
 
 @app.get("/", response_class=HTMLResponse)
@@ -67,32 +71,21 @@ def home(
     request: Request,
     db: Session = Depends(get_db)
 ):
-
     university = db.query(University).filter_by(
         code="FUO"
     ).first()
-
-    programmes = []
-
-    if university:
-        programmes = (
-            db.query(Programme)
-            .filter_by(university_id=university.id)
-            .order_by(Programme.name)
-            .all()
-        )
 
     return templates.TemplateResponse(
         request=request,
         name="home.html",
         context={
             "university": university,
-            "programmes": programmes,
         },
     )
 
 
-# CLASS LEVEL SELECTION
+# STEP 1: SELECT LEVEL
+# Example: /level/200
 
 @app.get(
     "/level/{level}",
@@ -100,13 +93,82 @@ def home(
 )
 def select_level(
     request: Request,
-    level: int
+    level: int,
+    db: Session = Depends(get_db)
 ):
-
-    if level not in [100, 200, 300, 400, 500]:
+    if level not in VALID_LEVELS:
         raise HTTPException(
             status_code=404,
             detail="Level not found"
+        )
+
+    university = db.query(University).filter_by(
+        code="FUO"
+    ).first()
+
+    if not university:
+        raise HTTPException(
+            status_code=404,
+            detail="University not found"
+        )
+
+    programmes = (
+        db.query(Programme)
+        .filter(
+            Programme.university_id == university.id
+        )
+        .order_by(Programme.name)
+        .all()
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="programmes.html",
+        context={
+            "level": level,
+            "programmes": programmes,
+        },
+    )
+
+
+# STEP 2: SELECT PROGRAMME
+# Example: /level/200/programme/1
+
+@app.get(
+    "/level/{level}/programme/{programme_id}",
+    response_class=HTMLResponse
+)
+def select_programme(
+    request: Request,
+    level: int,
+    programme_id: int,
+    db: Session = Depends(get_db)
+):
+    if level not in VALID_LEVELS:
+        raise HTTPException(
+            status_code=404,
+            detail="Level not found"
+        )
+
+    university = db.query(University).filter_by(
+        code="FUO"
+    ).first()
+
+    if not university:
+        raise HTTPException(
+            status_code=404,
+            detail="University not found"
+        )
+
+    programme = db.query(Programme).filter(
+        Programme.id == programme_id,
+        Programme.university_id == university.id
+    ).first()
+
+    if not programme:
+        raise HTTPException(
+            status_code=404,
+            detail="Programme not found"
         )
 
     return templates.TemplateResponse(
@@ -114,38 +176,66 @@ def select_level(
         name="semester.html",
         context={
             "level": level,
+            "programme": programme,
         },
     )
 
 
-# SEMESTER SELECTION AND COURSE LIST
+# STEP 3: SELECT SEMESTER
+# Example: /level/200/programme/1/semester/1
 
 @app.get(
-    "/level/{level}/semester/{semester}",
+    "/level/{level}/programme/{programme_id}/semester/{semester}",
     response_class=HTMLResponse
 )
 def select_semester(
     request: Request,
     level: int,
+    programme_id: int,
     semester: int,
     db: Session = Depends(get_db)
 ):
-
-    if level not in [100, 200, 300, 400, 500]:
+    if level not in VALID_LEVELS:
         raise HTTPException(
             status_code=404,
             detail="Level not found"
         )
 
-    if semester not in [1, 2]:
+    if semester not in VALID_SEMESTERS:
         raise HTTPException(
             status_code=404,
             detail="Semester not found"
         )
 
+    university = db.query(University).filter_by(
+        code="FUO"
+    ).first()
+
+    if not university:
+        raise HTTPException(
+            status_code=404,
+            detail="University not found"
+        )
+
+    programme = db.query(Programme).filter(
+        Programme.id == programme_id,
+        Programme.university_id == university.id
+    ).first()
+
+    if not programme:
+        raise HTTPException(
+            status_code=404,
+            detail="Programme not found"
+        )
+
+    # IMPORTANT:
+    # Courses must match all three:
+    # programme, level and semester.
+
     courses = (
         db.query(Course)
         .filter(
+            Course.programme_id == programme.id,
             Course.level == level,
             Course.semester == str(semester)
         )
@@ -166,6 +256,7 @@ def select_semester(
             "level": level,
             "semester": semester,
             "semester_name": semester_name,
+            "programme": programme,
             "courses": courses,
         },
     )
@@ -182,7 +273,6 @@ def course_page(
     course_id: int,
     db: Session = Depends(get_db)
 ):
-
     course = db.query(Course).filter_by(
         id=course_id
     ).first()
@@ -234,7 +324,6 @@ def resources(
     semester: str | None = None,
     db: Session = Depends(get_db)
 ):
-
     if not request.session.get("pledged"):
         return RedirectResponse(
             "/pledge",
@@ -245,8 +334,7 @@ def resources(
         Resource.status == "published"
     )
 
-    if programme_id and level:
-
+    if programme_id is not None and level is not None:
         course_ids = [
             course.id
             for course in db.query(Course).filter_by(
@@ -285,7 +373,6 @@ def resources(
     response_class=HTMLResponse
 )
 def pledge(request: Request):
-
     return templates.TemplateResponse(
         request=request,
         name="pledge.html",
@@ -295,7 +382,6 @@ def pledge(request: Request):
 
 @app.post("/pledge")
 def accept_pledge(request: Request):
-
     request.session["pledged"] = True
 
     return RedirectResponse(
@@ -314,7 +400,6 @@ def upload_page(
     request: Request,
     db: Session = Depends(get_db)
 ):
-
     university = db.query(University).filter_by(
         code="FUO"
     ).first()
@@ -348,7 +433,6 @@ async def upload_material(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
-
     if not validate_pdf(
         file.filename or "",
         file.content_type
@@ -389,7 +473,6 @@ def notify_when_ready(
     resource_id: int = Form(...),
     db: Session = Depends(get_db)
 ):
-
     db.add(
         ResourceNotification(
             email=email,
@@ -409,7 +492,6 @@ def notify_when_ready(
 
 @app.get("/health")
 def health():
-
     return {
         "status": "ok",
         "service": "campuscorrect"
@@ -422,7 +504,6 @@ def health():
 def api_programmes(
     db: Session = Depends(get_db)
 ):
-
     university = db.query(University).filter_by(
         code="FUO"
     ).first()
@@ -433,6 +514,7 @@ def api_programmes(
     programmes = (
         db.query(Programme)
         .filter_by(university_id=university.id)
+        .order_by(Programme.name)
         .all()
     )
 
@@ -452,18 +534,29 @@ def api_programmes(
 def api_courses(
     level: int | None = None,
     semester: str | None = None,
+    programme_id: int | None = None,
     db: Session = Depends(get_db)
 ):
-
     query = db.query(Course)
 
+    if programme_id is not None:
+        query = query.filter(
+            Course.programme_id == programme_id
+        )
+
     if level is not None:
-        query = query.filter(Course.level == level)
+        query = query.filter(
+            Course.level == level
+        )
 
     if semester is not None:
-        query = query.filter(Course.semester == semester)
+        query = query.filter(
+            Course.semester == semester
+        )
 
-    courses = query.order_by(Course.code).all()
+    courses = query.order_by(
+        Course.code
+    ).all()
 
     return [
         {
