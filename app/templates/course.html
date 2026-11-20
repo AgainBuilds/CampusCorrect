@@ -4,6 +4,7 @@
 {% block title %}{{ course.code }} · CampusCorrect{% endblock %}
 
 {% block content %}
+
 <section class="academic-page course-page">
 
     <nav class="academic-breadcrumb" aria-label="Breadcrumb">
@@ -18,7 +19,11 @@
         <span>{{ course.code }}</span>
     </nav>
 
+
+    <!-- COURSE HEADER -->
+
     <header class="course-hero">
+
         <p class="eyebrow">COURSE MATERIAL</p>
 
         <h1>{{ course.code }}</h1>
@@ -29,165 +34,314 @@
 
         <div class="course-information">
             <span>{{ course.level }} Level</span>
+
             <span>
                 {{ "First Semester" if course.semester == "1" else "Second Semester" }}
             </span>
+
             {% if course.programme %}
                 <span>{{ course.programme.name }}</span>
             {% endif %}
         </div>
+
+        {% if course_data.teacher %}
+            <p class="course-teacher">
+                Lecturer: {{ course_data.teacher }}
+            </p>
+        {% endif %}
+
     </header>
+
 
     <div class="course-content">
 
+
+        <!-- COURSE DEFINITION -->
+
+        {% if course_data.definition %}
+
+        <section class="course-section" id="definition">
+
+            <div class="course-section-heading">
+                <p class="eyebrow">INTRODUCTION</p>
+                <h2>Course definition</h2>
+            </div>
+
+            <p class="course-definition">
+                {{ course_data.definition }}
+            </p>
+
+        </section>
+
+        {% endif %}
+
+
         <!-- COURSE OUTLINE -->
+
         <section class="course-section" id="outline">
+
             <div class="course-section-heading">
                 <p class="eyebrow">01 / SYLLABUS</p>
                 <h2>Course outline</h2>
-                <p>Topics covered in this course.</p>
+                <p>Topics and modules covered in this course.</p>
             </div>
 
             {% if course_data and course_data.outline %}
+
                 <ol class="outline-list">
+
                     {% for topic in course_data.outline %}
-                        <li>
-                            <span class="outline-number">
-                                {{ "%02d"|format(loop.index) }}
-                            </span>
-                            <span class="outline-topic">{{ topic }}</span>
-                        </li>
+
+                    <li>
+
+                        <span class="outline-number">
+                            {{ "%02d"|format(loop.index) }}
+                        </span>
+
+                        <div class="outline-topic">
+
+                            {% if topic.title is defined %}
+
+                                <strong>{{ topic.title }}</strong>
+
+                                {% if topic.topics %}
+
+                                    <ul class="outline-subtopics">
+
+                                        {% for subtopic in topic.topics %}
+                                            <li>{{ subtopic }}</li>
+                                        {% endfor %}
+
+                                    </ul>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                {{ topic }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </li>
+
                     {% endfor %}
+
                 </ol>
+
             {% else %}
+
                 <p class="section-empty">
                     The course outline has not been added yet.
                 </p>
+
             {% endif %}
+
         </section>
 
-        <!-- TEXTBOOKS -->
-        <section class="course-section" id="textbooks">
+
+        <!-- ADDITIONAL COURSE NOTES -->
+
+        {% if course_data.notes %}
+
+        <section class="course-section" id="notes">
+
             <div class="course-section-heading">
-                <p class="eyebrow">02 / READING</p>
+                <p class="eyebrow">02 / STUDY NOTES</p>
+                <h2>Additional notes</h2>
+                <p>Important introductory information for this course.</p>
+            </div>
+
+            {% for note in course_data.notes %}
+
+                <article class="material-item">
+
+                    <div>
+                        <h3>{{ note.title }}</h3>
+                        <p>{{ note.content }}</p>
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- TEXTBOOKS -->
+
+        <section class="course-section" id="textbooks">
+
+            <div class="course-section-heading">
+                <p class="eyebrow">03 / READING</p>
                 <h2>Textbooks</h2>
                 <p>Recommended books and learning materials.</p>
             </div>
 
             {% if course_data and course_data.textbooks %}
+
                 <div class="material-list">
+
                     {% for book in course_data.textbooks %}
-                        <article class="material-item">
-                            <div>
-                                <h3>{{ book.title }}</h3>
 
-                                {% if book.author %}
-                                    <p>{{ book.author }}</p>
-                                {% endif %}
+                    <article class="material-item">
 
-                                {% if book.description %}
-                                    <p>{{ book.description }}</p>
-                                {% endif %}
-                            </div>
+                        <div>
+                            <h3>{{ book.title }}</h3>
 
-                            {% if book.url %}
-                                <a href="{{ book.url }}" target="_blank"
-                                   rel="noopener noreferrer">
-                                    Open resource →
-                                </a>
+                            {% if book.author %}
+                                <p>{{ book.author }}</p>
                             {% endif %}
-                        </article>
+
+                            {% if book.description %}
+                                <p>{{ book.description }}</p>
+                            {% endif %}
+                        </div>
+
+                        {% if book.url %}
+                            <a href="{{ book.url }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Open resource →
+                            </a>
+                        {% endif %}
+
+                    </article>
+
                     {% endfor %}
+
                 </div>
+
             {% else %}
+
                 <p class="section-empty">
                     No textbooks have been added yet.
                 </p>
+
             {% endif %}
+
         </section>
 
+
         <!-- PAST QUESTIONS -->
+
         <section class="course-section" id="past-questions">
+
             <div class="course-section-heading">
-                <p class="eyebrow">03 / PRACTICE</p>
+                <p class="eyebrow">04 / PRACTICE</p>
                 <h2>Past questions</h2>
                 <p>Previous examination and practice materials.</p>
             </div>
 
             {% if course_data and course_data.past_questions %}
+
                 <div class="material-list">
+
                     {% for question in course_data.past_questions %}
-                        <article class="material-item">
-                            <div>
-                                <h3>{{ question.title }}</h3>
 
-                                {% if question.year %}
-                                    <p>Academic year: {{ question.year }}</p>
-                                {% endif %}
+                    <article class="material-item">
 
-                                {% if question.description %}
-                                    <p>{{ question.description }}</p>
-                                {% endif %}
-                            </div>
+                        <div>
+                            <h3>{{ question.title }}</h3>
 
-                            {% if question.url %}
-                                <a href="{{ question.url }}" target="_blank"
-                                   rel="noopener noreferrer">
-                                    View questions →
-                                </a>
+                            {% if question.year %}
+                                <p>Academic year: {{ question.year }}</p>
                             {% endif %}
-                        </article>
+
+                            {% if question.description %}
+                                <p>{{ question.description }}</p>
+                            {% endif %}
+                        </div>
+
+                        {% if question.url %}
+                            <a href="{{ question.url }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                View questions →
+                            </a>
+                        {% endif %}
+
+                    </article>
+
                     {% endfor %}
+
                 </div>
+
             {% else %}
+
                 <p class="section-empty">
                     Past questions have not been uploaded yet.
                 </p>
+
             {% endif %}
+
         </section>
 
+
         <!-- CONTRIBUTORS -->
+
         <section class="course-section" id="contributors">
+
             <div class="course-section-heading">
-                <p class="eyebrow">04 / COMMUNITY</p>
+                <p class="eyebrow">05 / COMMUNITY</p>
                 <h2>Contributors</h2>
                 <p>Students who have contributed to this course.</p>
             </div>
 
             {% if course_data and course_data.contributors %}
+
                 <div class="contributor-list">
+
                     {% for contributor in course_data.contributors %}
-                        <article class="contributor-item">
-                            <div>
-                                <h3>{{ contributor.name }}</h3>
 
-                                {% if contributor.level %}
-                                    <p>{{ contributor.level }} Level</p>
-                                {% endif %}
-                            </div>
+                    <article class="contributor-item">
 
-                            {% if contributor.contributions %}
-                                <span>
-                                    {{ contributor.contributions }} contribution{% if contributor.contributions != 1 %}s{% endif %}
-                                </span>
+                        <div>
+                            <h3>{{ contributor.name }}</h3>
+
+                            {% if contributor.level %}
+                                <p>{{ contributor.level }} Level</p>
                             {% endif %}
-                        </article>
+                        </div>
+
+                        {% if contributor.contributions %}
+                            <span>
+                                {{ contributor.contributions }} contribution{% if contributor.contributions != 1 %}s{% endif %}
+                            </span>
+                        {% endif %}
+
+                    </article>
+
                     {% endfor %}
+
                 </div>
+
             {% else %}
+
                 <p class="section-empty">
                     No contributors have been listed yet.
                 </p>
+
             {% endif %}
+
         </section>
 
     </div>
 
+
+    <!-- BACK BUTTON -->
+
     <footer class="course-page-footer">
+
         <a href="/level/{{ course.level }}/semester/{{ course.semester }}">
             ← Back to courses
         </a>
+
     </footer>
 
 </section>
+
 {% endblock %}
