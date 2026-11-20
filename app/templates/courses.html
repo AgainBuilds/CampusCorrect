@@ -1,71 +1,122 @@
 
 {% extends "base.html" %}
 
-{% block title %}{{ level }} Level · {{ semester_name }} · CampusCorrect{% endblock %}
+{% block title %}{{ programme.name }} · {{ level }} Level · {{ semester_name }} · CampusCorrect{% endblock %}
 
 {% block content %}
+
 <section class="academic-page">
 
     <nav class="academic-breadcrumb" aria-label="Breadcrumb">
+
         <a href="/">Home</a>
         <span>/</span>
-        <span>{{ level }} Level</span>
+
+        <a href="/level/{{ level }}">
+            {{ level }} Level
+        </a>
         <span>/</span>
+
+        <a href="/level/{{ level }}/programme/{{ programme.id }}">
+            {{ programme.name }}
+        </a>
+        <span>/</span>
+
         <span>{{ semester_name }}</span>
+
     </nav>
 
     <header class="academic-heading">
-        <p class="eyebrow">ACADEMIC RESOURCES</p>
-        <h1>{{ level }} Level</h1>
-        <p class="academic-subtitle">{{ semester_name }}</p>
+
+        <p class="eyebrow">COURSE DIRECTORY</p>
+
+        <h1>{{ programme.name }}</h1>
+
+        <p class="academic-subtitle">
+            {{ level }} Level · {{ semester_name }}
+        </p>
+
     </header>
 
     <div class="academic-section-heading">
+
         <div>
-            <p class="eyebrow">COURSE DIRECTORY</p>
+            <p class="eyebrow">ACADEMIC RESOURCES</p>
             <h2>Available courses</h2>
         </div>
 
         <span class="course-count">
-            {{ courses|length }} course{% if courses|length != 1 %}s{% endif %}
+            {{ courses|length }}
+            course{% if courses|length != 1 %}s{% endif %}
         </span>
+
     </div>
 
     {% if courses %}
+
         <div class="course-list">
+
             {% for course in courses %}
+
                 <a
                     href="/course/{{ course.id }}"
                     class="course-item"
                 >
+
                     <div class="course-item-main">
-                        <span class="course-code">{{ course.code }}</span>
-                        <h3>{{ course.title or course.code }}</h3>
-                        <p>
-                            {{ course.programme.name if course.programme else "Academic programme" }}
-                        </p>
+
+                        <span class="course-code">
+                            {{ course.code }}
+                        </span>
+
+                        <h3>
+                            {{ course.title or course.code }}
+                        </h3>
+
+                        <p>{{ programme.name }}</p>
+
                     </div>
 
                     <div class="course-item-meta">
-                        <span>
-                            {{ "First Semester" if course.semester == "1" else "Second Semester" }}
+
+                        <span>{{ semester_name }}</span>
+
+                        <span class="course-arrow" aria-hidden="true">
+                            →
                         </span>
-                        <span class="course-arrow" aria-hidden="true">→</span>
+
                     </div>
+
                 </a>
+
             {% endfor %}
+
         </div>
+
     {% else %}
+
         <div class="academic-empty">
+
             <p class="empty-code">NO COURSES YET</p>
+
             <h2>Nothing has been added here.</h2>
+
             <p>
-                Course information for this level and semester
-                has not been published yet.
+                Course information for this programme,
+                level and semester has not been added yet.
             </p>
-            <a href="/" class="button button-secondary">Back to programmes</a>
+
+            <a
+                href="/level/{{ level }}/programme/{{ programme.id }}"
+                class="button button-secondary"
+            >
+                Back to semesters
+            </a>
+
         </div>
+
     {% endif %}
 
 </section>
+
 {% endblock %}
