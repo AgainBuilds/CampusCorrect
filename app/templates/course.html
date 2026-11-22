@@ -19,7 +19,6 @@
         <span>{{ course.code }}</span>
     </nav>
 
-
     <!-- COURSE HEADER -->
 
     <header class="course-hero">
@@ -52,8 +51,49 @@
 
     </header>
 
-
     <div class="course-content">
+
+        <!-- AI COURSE SUMMARY -->
+
+        <section class="course-section" id="ai-summary">
+
+            <div class="course-section-heading">
+                <p class="eyebrow">AI STUDY ASSISTANT</p>
+                <h2>AI course summary</h2>
+                <p>
+                    Understand this course with a structured,
+                    course-specific explanation.
+                </p>
+            </div>
+
+            <div
+                class="section-empty"
+                id="ai-summary-output"
+                aria-live="polite"
+            >
+                Your AI summary has not been generated yet.
+                Click below to generate one.
+            </div>
+
+            <button
+                type="button"
+                class="button"
+                id="generate-summary"
+                style="margin-top: 20px;"
+            >
+                Generate AI summary
+            </button>
+
+            <p style="
+                color: var(--muted);
+                font-size: .78rem;
+                margin-top: 14px;
+            ">
+                AI-generated material is a study aid.
+                Always consult your official course materials.
+            </p>
+
+        </section>
 
 
         <!-- COURSE DEFINITION -->
@@ -286,7 +326,6 @@
         <section class="course-section" id="contributors">
 
             <div class="course-section-heading">
-                <p class="eyebrow">05 / COMMUNITY</p>
                 <h2>Contributors</h2>
                 <p>Students who have contributed to this course.</p>
             </div>
@@ -343,5 +382,133 @@
     </footer>
 
 </section>
+
+
+<!-- AI SUMMARY JAVASCRIPT -->
+
+<script>
+(() => {
+
+    const button = document.getElementById("generate-summary");
+    const output = document.getElementById("ai-summary-output");
+
+    if (!button || !output) return;
+
+    function displaySummary(summary) {
+
+        output.replaceChildren();
+
+        const lines = summary.split(/\r?\n/);
+
+        let currentList = null;
+
+        lines.forEach(line => {
+
+            const value = line.trim();
+
+            if (!value) {
+                currentList = null;
+                return;
+            }
+
+            if (/^#{1,3}\s/.test(value)) {
+
+                currentList = null;
+
+                const heading = document.createElement("h3");
+
+                heading.textContent = value
+                    .replace(/^#{1,3}\s*/, "");
+
+                heading.style.marginTop = "22px";
+                heading.style.marginBottom = "8px";
+
+                output.appendChild(heading);
+
+                return;
+            }
+
+            if (/^[-*]\s/.test(value)) {
+
+                if (!currentList) {
+                    currentList = document.createElement("ul");
+                    currentList.style.paddingLeft = "22px";
+                    output.appendChild(currentList);
+                }
+
+                const item = document.createElement("li");
+
+                item.textContent = value.replace(/^[-*]\s*/, "");
+
+                currentList.appendChild(item);
+
+                return;
+            }
+
+            currentList = null;
+
+            const paragraph = document.createElement("p");
+
+            paragraph.textContent = value;
+
+            paragraph.style.marginBottom = "12px";
+
+            output.appendChild(paragraph);
+
+        });
+
+    }
+
+
+    button.addEventListener("click", async () => {
+
+        button.disabled = true;
+        button.textContent = "Generating summary...";
+
+        output.textContent =
+            "CampusCorrect AI is preparing your course summary. Please wait.";
+
+        try {
+
+            const response = await fetch(
+                "/api/courses/{{ course.id }}/summary",
+                {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || "Unable to generate summary."
+                );
+            }
+
+            displaySummary(data.summary);
+
+            button.textContent = "Regenerate summary";
+
+        } catch (error) {
+
+            output.textContent =
+                error.message ||
+                "Something went wrong. Please try again.";
+
+            button.textContent = "Try again";
+
+        } finally {
+
+            button.disabled = false;
+
+        }
+
+    });
+
+})();
+</script>
 
 {% endblock %}
