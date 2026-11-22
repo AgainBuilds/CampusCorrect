@@ -1,0 +1,55 @@
+
+{% extends "base.html" %}
+
+{% block title %}Contributions — CampusCorrect{% endblock %}
+
+{% block content %}
+
+<section class="simple-page">
+
+    <p class="eyebrow">OUR CONTRIBUTORS</p>
+
+    <h1>The people behind the resources.</h1>
+
+    <p class="page-intro">
+        We appreciate the students who contribute educational
+        materials and help make learning resources available
+        to the FUO community.
+    </p>
+
+    <div class="contributors-grid">
+
+        {% for contributor in contributors %}
+
+        <article class="contributor-card">
+
+            <div
+                class="contributor-avatar"
+                aria-label="Contributor photo not yet available"
+            >
+                {{ contributor.initials }}
+            </div>
+
+            <div>
+
+                <span class="contributor-number">
+                    CONTRIBUTOR {{ contributor.number }}
+                </span>
+
+                <h2>{{ contributor.name }}</h2>
+
+                <p>{{ contributor.department }}</p>
+
+                <p>{{ contributor.level }}</p>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}
