@@ -85,7 +85,6 @@ def home(
 
 
 # STEP 1: SELECT LEVEL
-# Example: /level/200
 
 @app.get(
     "/level/{level}",
@@ -132,7 +131,6 @@ def select_level(
 
 
 # STEP 2: SELECT PROGRAMME
-# Example: /level/200/programme/1
 
 @app.get(
     "/level/{level}/programme/{programme_id}",
@@ -182,7 +180,6 @@ def select_programme(
 
 
 # STEP 3: SELECT SEMESTER
-# Example: /level/200/programme/1/semester/1
 
 @app.get(
     "/level/{level}/programme/{programme_id}/semester/{semester}",
@@ -227,10 +224,6 @@ def select_semester(
             status_code=404,
             detail="Programme not found"
         )
-
-    # IMPORTANT:
-    # Courses must match all three:
-    # programme, level and semester.
 
     courses = (
         db.query(Course)
@@ -387,6 +380,41 @@ def accept_pledge(request: Request):
     return RedirectResponse(
         "/",
         status_code=303
+    )
+
+
+# ABOUT PAGE
+
+@app.get("/about", response_class=HTMLResponse)
+def about_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="about.html",
+        context={},
+    )
+
+
+# CONTRIBUTIONS PAGE
+
+@app.get("/contributions", response_class=HTMLResponse)
+def contributions_page(request: Request):
+
+    contributors = [
+        {
+            "name": "Ebimem Nickson",
+            "department": "Computer Science and Informatics",
+            "level": "200L",
+            "number": "01",
+            "initials": "EN",
+        }
+    ]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="contributions.html",
+        context={
+            "contributors": contributors,
+        },
     )
 
 
