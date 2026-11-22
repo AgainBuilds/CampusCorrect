@@ -1,9 +1,4 @@
 
-/* =========================================================
-   CAMPUSCORRECT
-   White background | Black typography | Kraft buttons
-========================================================= */
-
 :root {
     --paper: #ffffff;
     --ink: #171717;
@@ -75,10 +70,7 @@ button {
     padding-right: max(24px, calc((100% - var(--page-width)) / 2));
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
+/* HEADER */
 
 .site-header {
     min-height: 78px;
@@ -126,10 +118,7 @@ button {
     color: var(--ink);
 }
 
-
-/* =========================================================
-   PAGE LOADER
-========================================================= */
+/* PAGE LOADER */
 
 .page-loader {
     position: fixed;
@@ -190,19 +179,11 @@ button {
 }
 
 @keyframes loader-progress {
-    from {
-        transform: translateX(-110%);
-    }
-
-    to {
-        transform: translateX(260%);
-    }
+    from { transform: translateX(-110%); }
+    to { transform: translateX(260%); }
 }
 
-
-/* =========================================================
-   SHARED TEXT
-========================================================= */
+/* SHARED TEXT */
 
 .eyebrow {
     margin: 0 0 13px;
@@ -219,10 +200,7 @@ button {
     color: var(--muted);
 }
 
-
-/* =========================================================
-   HOMEPAGE INTRO
-========================================================= */
+/* HOMEPAGE INTRO */
 
 .home-intro {
     padding-top: 100px;
@@ -250,10 +228,7 @@ button {
     font-size: 1.02rem;
 }
 
-
-/* =========================================================
-   HOMEPAGE SECTIONS
-========================================================= */
+/* HOMEPAGE SECTIONS */
 
 .academic-selection,
 .programme-section {
@@ -281,10 +256,7 @@ button {
     font-size: .78rem;
 }
 
-
-/* =========================================================
-   LEVEL GRID
-========================================================= */
+/* LEVEL GRID */
 
 .level-grid {
     display: grid;
@@ -332,10 +304,7 @@ button {
     text-align: right;
 }
 
-
-/* =========================================================
-   PROGRAMMES
-========================================================= */
+/* PROGRAMMES */
 
 .programme-section {
     border-top: 1px solid var(--line);
@@ -378,10 +347,7 @@ button {
     font-size: .8rem;
 }
 
-
-/* =========================================================
-   CONTRIBUTION SECTION
-========================================================= */
+/* CONTRIBUTION SECTION */
 
 .contribution-section {
     display: flex;
@@ -435,10 +401,7 @@ button {
     background: var(--paper);
 }
 
-
-/* =========================================================
-   ACADEMIC PAGES
-========================================================= */
+/* ACADEMIC PAGES */
 
 .academic-page {
     max-width: 1168px;
@@ -529,10 +492,7 @@ button {
     font-size: 1.25rem;
 }
 
-
-/* =========================================================
-   COURSE DIRECTORY
-========================================================= */
+/* COURSE DIRECTORY */
 
 .academic-section-heading {
     display: flex;
@@ -625,10 +585,7 @@ button {
     color: var(--muted);
 }
 
-
-/* =========================================================
-   INDIVIDUAL COURSE PAGE
-========================================================= */
+/* INDIVIDUAL COURSE PAGE */
 
 .course-hero {
     padding: 20px 0 45px;
@@ -723,10 +680,7 @@ button {
     font-size: .9rem;
 }
 
-
-/* =========================================================
-   TEXTBOOKS AND PAST QUESTIONS
-========================================================= */
+/* MATERIALS */
 
 .material-list {
     border-top: 1px solid var(--line);
@@ -764,10 +718,7 @@ button {
     color: var(--kraft-dark);
 }
 
-
-/* =========================================================
-   EXISTING COURSE CONTRIBUTORS
-========================================================= */
+/* EXISTING CONTRIBUTORS */
 
 .contributor-list {
     border-top: 1px solid var(--line);
@@ -807,10 +758,7 @@ button {
     color: var(--kraft-dark);
 }
 
-
-/* =========================================================
-   EXISTING FORMS
-========================================================= */
+/* FORMS */
 
 .form-container {
     width: 100%;
@@ -854,10 +802,7 @@ button {
     border-color: var(--kraft-dark);
 }
 
-
-/* =========================================================
-   PLEDGE
-========================================================= */
+/* PLEDGE */
 
 .pledge-page {
     width: min(750px, calc(100% - 48px));
@@ -887,10 +832,7 @@ button {
     gap: 12px;
 }
 
-
-/* =========================================================
-   ALERTS
-========================================================= */
+/* ALERTS */
 
 .alert {
     padding: 15px 18px;
@@ -907,10 +849,7 @@ button {
     border-left: 4px solid #a33b32;
 }
 
-
-/* =========================================================
-   FOOTER
-========================================================= */
+/* FOOTER */
 
 .site-footer {
     padding-top: 35px;
@@ -932,10 +871,7 @@ button {
     font-size: .82rem;
 }
 
-
-/* =========================================================
-   UPLOAD PAGE
-========================================================= */
+/* UPLOAD PAGE */
 
 .upload-page {
     width: min(760px, calc(100% - 48px));
@@ -1030,10 +966,7 @@ button {
     font-size: .9rem;
 }
 
-
-/* =========================================================
-   ABOUT PAGE AND CONTRIBUTIONS PAGE
-========================================================= */
+/* ABOUT AND CONTRIBUTIONS */
 
 .simple-page {
     width: min(900px, calc(100% - 48px));
@@ -1056,68 +989,80 @@ button {
     font-size: 1.05rem;
 }
 
+/* CONTRIBUTOR CARDS — FIXED */
 
-/* =========================================================
-   CONTRIBUTOR CARDS
-========================================================= */
+.contributions-page {
+    width: min(900px, calc(100% - 48px));
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 0 88px;
+}
 
 .contributors-grid {
     display: grid;
-    grid-template-columns: repeat(
-        auto-fit,
-        minmax(230px, 1fr)
-    );
-    gap: 18px;
-    margin-top: 42px;
-}
-
-.contributor-card {
-    display: flex;
-    align-items: center;
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
-    min-width: 0;
-    padding: 20px;
-    border: 1px solid var(--line);
+    width: 100%;
+    margin: 36px 0 0;
 }
 
-.contributor-avatar {
-    flex: 0 0 66px;
-    width: 66px;
-    height: 66px;
+.contributions-page .contributor-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--line);
+    background: #fff;
+    text-align: left;
+}
+
+.contributions-page .contributor-avatar {
     display: grid;
+    flex: 0 0 76px;
+    width: 76px;
+    height: 96px;
+    min-width: 76px;
     place-items: center;
     overflow: hidden;
+    border: 1px solid var(--line);
     background: var(--kraft-light);
     color: var(--kraft-dark);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 900;
 }
 
-.contributor-card h2 {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.3;
+.contributions-page .contributor-info {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
-.contributor-card p {
-    margin: 5px 0 0;
-    color: var(--muted);
-    font-size: .8rem;
-}
-
-.contributor-number {
+.contributions-page .contributor-number {
     display: block;
-    margin-bottom: 5px;
+    margin: 0 0 5px;
     color: var(--kraft-dark);
-    font-size: .7rem;
+    font-size: .68rem;
     font-weight: 900;
     letter-spacing: .1em;
 }
 
+.contributions-page .contributor-info h2 {
+    margin: 0 0 7px;
+    font-size: 1.08rem;
+    line-height: 1.25;
+}
 
-/* =========================================================
-   RESPONSIVE DESIGN
-========================================================= */
+.contributions-page .contributor-info p {
+    margin: 3px 0;
+    color: var(--muted);
+    font-size: .84rem;
+    line-height: 1.45;
+}
+
+/* RESPONSIVE DESIGN */
 
 @media (max-width: 700px) {
 
@@ -1131,8 +1076,6 @@ button {
         padding-left: 20px;
         padding-right: 20px;
     }
-
-    /* MOBILE NAVIGATION */
 
     .site-header {
         min-height: 68px;
@@ -1153,8 +1096,6 @@ button {
     .header-links a {
         font-size: .8rem;
     }
-
-    /* HOMEPAGE */
 
     .home-intro {
         padding-top: 70px;
@@ -1187,8 +1128,6 @@ button {
         padding-bottom: 45px;
     }
 
-    /* ACADEMIC PAGES */
-
     .academic-page {
         padding-top: 30px;
         padding-bottom: 60px;
@@ -1204,8 +1143,6 @@ button {
         flex-direction: column;
         gap: 8px;
     }
-
-    /* COURSE DIRECTORY */
 
     .course-item {
         align-items: flex-start;
@@ -1230,8 +1167,6 @@ button {
         padding: 35px 0;
     }
 
-    /* MATERIALS */
-
     .material-item {
         align-items: flex-start;
         flex-direction: column;
@@ -1245,8 +1180,6 @@ button {
     .form-container {
         padding: 20px;
     }
-
-    /* UPLOAD PAGE */
 
     .upload-page {
         width: calc(100% - 40px);
@@ -1266,18 +1199,45 @@ button {
         width: 100%;
     }
 
-    /* ABOUT AND CONTRIBUTIONS */
-
     .simple-page {
         width: calc(100% - 40px);
         padding: 45px 0 70px;
     }
+
+    .contributions-page {
+        width: calc(100% - 40px);
+        padding: 42px 0 68px;
+    }
+
+    .contributions-page > h1 {
+        font-size: clamp(2.25rem, 9vw, 3.4rem);
+        line-height: 1.08;
+        overflow-wrap: break-word;
+    }
+
+    .contributions-page > .page-intro {
+        font-size: .98rem;
+        line-height: 1.65;
+    }
+
+    .contributions-page .contributors-grid {
+        margin-top: 28px;
+    }
+
+    .contributions-page .contributor-card {
+        gap: 14px;
+        padding: 14px;
+    }
+
+    .contributions-page .contributor-avatar {
+        flex-basis: 68px;
+        width: 68px;
+        height: 86px;
+        min-width: 68px;
+    }
 }
 
-
-/* =========================================================
-   SMALL MOBILE SCREENS
-========================================================= */
+/* SMALL MOBILE */
 
 @media (max-width: 380px) {
 
@@ -1311,5 +1271,17 @@ button {
     .upload-field input,
     .upload-field select {
         font-size: .9rem;
+    }
+
+    .contributions-page .contributor-card {
+        gap: 11px;
+        padding: 11px;
+    }
+
+    .contributions-page .contributor-avatar {
+        flex-basis: 60px;
+        width: 60px;
+        height: 76px;
+        min-width: 60px;
     }
 }
