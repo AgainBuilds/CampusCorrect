@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<section class="simple-page">
+<section class="simple-page contributions-page">
 
     <p class="eyebrow">OUR CONTRIBUTORS</p>
 
@@ -23,14 +23,13 @@
 
         <article class="contributor-card">
 
-            <div
-                class="contributor-avatar"
-                aria-label="Contributor photo not yet available"
-            >
+            <div class="contributor-avatar"
+                 role="img"
+                 aria-label="Photo placeholder for {{ contributor.name }}">
                 {{ contributor.initials }}
             </div>
 
-            <div>
+            <div class="contributor-info">
 
                 <span class="contributor-number">
                     CONTRIBUTOR {{ contributor.number }}
