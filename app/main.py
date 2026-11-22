@@ -1,4 +1,9 @@
 
+import json
+import os
+import urllib.error
+import urllib.request
+
 from fastapi import (
     Depends,
     FastAPI,
@@ -39,7 +44,7 @@ seed()
 
 app = FastAPI(
     title="CampusCorrect",
-    version="0.4.0"
+    version="0.5.0"
 )
 
 app.add_middleware(
@@ -302,6 +307,165 @@ def course_page(
             "resources": resources,
         },
     )
+
+
+# AI COURSE SUMMARY
+
+@app.post("/api/courses/{course_id}/summary")
+def generate_course_summary(
+    course_id: int,
+    db: Session = Depends(get_db)
+):
+    api_key = os.environ.get("GEMINI_API_KEY")
+
+    if not api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="AI summaries are not configured yet. Please try again later."
+        )
+
+    course = db.query(Course).filter_by(
+        id=course_id
+    ).first()
+
+    if not course:
+        raise HTTPException(
+            status_code=404,
+            detail="Course not found."
+        )
+
+    course_key = course.code.replace(" ", "").upper()
+
+    course_data = ACADEMIC_CATALOG.get(
+        course_key,
+        {}
+    )
+
+    # Only use information belonging to this course.
+
+    course_information = {
+        "course_code": course.code,
+        "course_title": course.title or course.code,
+        "level": f"{course.level} Level",
+        "semester": (
+            "First Semester"
+            if course.semester == "1"
+            else "Second Semester"
+        ),
+        "definition": course_data.get("definition", ""),
+        "outline": course_data.get("outline", []),
+        "notes": course_data.get("notes", []),
+        "textbooks": course_data.get("textbooks", []),
+    }
+
+    prompt = f"""
+You are CampusCorrect's academic study assistant.
+
+Create a useful university-level study summary for the course below.
+
+COURSE INFORMATION:
+{json.dumps(course_information, ensure_ascii=False, default=str)}
+
+INSTRUCTIONS:
+
+1. Explain what the course is about.
+2. Explain the important topics in the supplied course outline.
+3. Organize the topics into a logical learning structure.
+4. Explain important concepts in understandable language.
+5. Identify the foundational knowledge students should understand.
+6. Finish with a section called "What to focus on".
+7. Use headings and clear paragraphs.
+8. Keep the explanation educational and detailed enough to be useful.
+9. Do not invent topics, textbooks, lecturer instructions or examination predictions.
+10. Do not pretend that missing course information was supplied.
+11. If the outline is incomplete, clearly mention that the summary is based on limited information.
+
+Make the summary specific to this course.
+Do not give a generic summary that could apply to every course.
+"""
+
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/"
+        "models/gemini-2.5-flash:generateContent"
+    )
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.3,
+            "maxOutputTokens": 1800
+        }
+    }
+
+    request_data = json.dumps(payload).encode("utf-8")
+
+    api_request = urllib.request.Request(
+        url,
+        data=request_data,
+        headers={
+            "Content-Type": "application/json",
+            "x-goog-api-key": api_key,
+        },
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(
+            api_request,
+            timeout=45
+        ) as response:
+
+            result = json.loads(
+                response.read().decode("utf-8")
+            )
+
+        summary = (
+            result["candidates"][0]
+            ["content"]["parts"][0]["text"]
+        )
+
+        if not summary.strip():
+            raise ValueError("Empty AI response")
+
+        return {
+            "course": course.code,
+            "summary": summary.strip()
+        }
+
+    except urllib.error.HTTPError as error:
+
+        if error.code == 429:
+            raise HTTPException(
+                status_code=429,
+                detail="AI usage is temporarily limited. Please try again later."
+            )
+
+        raise HTTPException(
+            status_code=502,
+            detail="The AI service could not generate your summary."
+        )
+
+    except (
+        urllib.error.URLError,
+        TimeoutError,
+        KeyError,
+        IndexError,
+        ValueError,
+        json.JSONDecodeError
+    ):
+
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to generate the summary right now. Please try again."
+        )
 
 
 # EXISTING RESOURCE LIBRARY
