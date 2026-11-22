@@ -1,68 +1,79 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
 
-    <title>{% block title %}CampusCorrect{% endblock %}</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="CampusCorrect — Get ahead academically with less stress.">
+    <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="/static/style.css">
+    <meta name="description"
+          content="CampusCorrect helps Federal University Otuoke students access academic materials and resources with less stress.">
+
+    <title>
+        {% block title %}CampusCorrect — Get ahead academically{% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="/static/style.css?v=20261122-2">
+
+    {% block extra_head %}{% endblock %}
 </head>
 
 <body>
 
-    <div id="page-loader" class="page-loader">
-        <div class="loader-content">
-            <div class="loader-mark">CC.</div>
-            <h2>CampusCorrect</h2>
-            <div class="loader-line">
-                <span></span>
-            </div>
-            <p>Preparing your academic space...</p>
-        </div>
-    </div>
-
     <header class="site-header">
 
         <a href="/" class="brand">
+
             <span class="brand-mark">CC.</span>
+
             <span>CampusCorrect</span>
+
         </a>
 
-        <nav class="header-links" aria-label="Main navigation">
+        <nav class="header-links">
+
             <a href="/">Home</a>
+
             <a href="/about">About</a>
+
             <a href="/contributions">Contributions</a>
+
         </nav>
 
     </header>
 
+
     <main class="site-main">
+
         {% block content %}{% endblock %}
+
     </main>
 
+
     <footer class="site-footer">
-        <div class="footer-brand">CampusCorrect.</div>
-        <p>Get ahead academically with less stress.</p>
-        <span>Federal University Otuoke</span>
+
+        <div class="footer-brand">
+            CampusCorrect.
+        </div>
+
+        <p>
+            Get ahead academically with less stress.
+        </p>
+
+        <p>
+            Federal University Otuoke
+        </p>
+
     </footer>
 
-    <script>
-        window.addEventListener("load", function () {
-            const loader = document.getElementById("page-loader");
 
-            if (loader) {
-                loader.classList.add("loader-hidden");
-
-                setTimeout(function () {
-                    loader.remove();
-                }, 400);
-            }
-        });
-    </script>
+    {% block scripts %}{% endblock %}
 
 </body>
+
 </html>
